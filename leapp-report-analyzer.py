@@ -1,9 +1,10 @@
 import argparse
-import collections
-import json
 import glob
+import json
 import os
 import sys
+from collections import OrderedDict, defaultdict
+
 # Check if Python version is 3.6 or higher (cgi.escape is deprecated/removed for newer versions)
 if sys.version_info.major >= 3 and sys.version_info.minor >= 6:
     from html import escape
@@ -11,6 +12,16 @@ else:
     from cgi import escape
 
 SEVERITY_ORDER = ["inhibitor", "high", "medium", "low", "info"]
+HTML_TABLE_OPTIONS = "border='1' cellpadding='5' cellspacing='0'"
+
+
+def _create_grouped_data_structure():
+    # JSON structure: {severity: [key: {title: str, {hostnames: [], remediations: {}}]}
+    return defaultdict(lambda: defaultdict(lambda: {"title": "", "hostnames": [], "remediations": []}))
+
+
+def escape_html(text):
+    return escape(text, quote=True)
 
 
 def main():
@@ -24,8 +35,9 @@ def main():
 
     grouped_data_list = [parse_leapp_report(input_file) for input_file in input_files]
     merged_grouped_data = merge_grouped_data(grouped_data_list)
-    write_grouped_data_to_json(merged_grouped_data, args.output_json)
-    html_tables = generate_html_tables(merged_grouped_data)
+    ordered_merged_data = order_grouped_data(merged_grouped_data)
+    write_grouped_data_to_json(ordered_merged_data, args.output_json)
+    html_tables = generate_html_tables(ordered_merged_data)
     write_html_tables_to_file(html_tables, args.output_html)
 
 
@@ -42,9 +54,7 @@ def get_parser():
     )
 
     output_group = parser.add_argument_group("output", "Output options, both required")
-    output_group.add_argument(
-        "-o", "--output-json", required=True, help="Output JSON file to store the grouped data"
-    )
+    output_group.add_argument("-o", "--output-json", required=True, help="Output JSON file to store the grouped data")
     output_group.add_argument(
         "-t", "--output-html", required=True, help="Output HTML file to store the tables with grouped data"
     )
@@ -56,38 +66,60 @@ def parse_leapp_report(report_file):
     with open(report_file, "r") as f:
         report_data = json.load(f)
 
-    grouped_data = collections.defaultdict(lambda: collections.defaultdict(set))
+    grouped_data = _create_grouped_data_structure()
+
     for entry in report_data["entries"]:
         severity = entry["severity"]
+        title = entry["title"]
+        hostname = entry["hostname"]
         entry_flags = entry.get("flags", entry.get("groups", []))
+        remediations = entry.get("detail", {}).get("remediations", [])
+        # NOTE: use key if exists, otherwise use title (v100 reports may not have key field)
+        key = entry.get("key", title)
+
         if "inhibitor" in entry_flags:
             severity = "inhibitor"
-        grouped_data[severity][entry["title"]].add(entry["hostname"])
+
+        grouped_data[severity][key]["title"] = title
+        grouped_data[severity][key]["hostnames"].append(hostname)
+        grouped_data[severity][key]["remediations"] = remediations
 
     return grouped_data
 
 
 def merge_grouped_data(grouped_data_list):
-    """Merge grouped data from multiple reports into one. And sort entries and hostnames alphabetically."""
-    merged_data = collections.defaultdict(lambda: collections.defaultdict(set))
+    """Merge grouped data from multiple reports into one."""
+    merged_data = _create_grouped_data_structure()
 
     for grouped_data in grouped_data_list:
         for severity, entries in grouped_data.items():
-            for entry_title, hostnames in entries.items():
-                merged_data[severity][entry_title].update(hostnames)
+            for key, entry_data in entries.items():
+                merged_data[severity][key]["title"] = entry_data["title"]
+                merged_data[severity][key]["hostnames"].extend(entry_data["hostnames"])
+                # NOTE: remediations should be the same for the same key
+                merged_data[severity][key]["remediations"] = entry_data["remediations"]
 
-    ordered_merged_data = collections.OrderedDict()
+    return merged_data
+
+
+def order_grouped_data(grouped_data):
+    """Order the data by severity, and entries by entry title. Sort hostnames alphabetically."""
+    ordered_data = OrderedDict()
+    # Order the data by severity
     for severity in SEVERITY_ORDER:
-        if severity in merged_data:
-            # Sort entries and hostnames alphabetically
-            ordered_merged_data[severity] = collections.OrderedDict(
+        if severity in grouped_data:
+            # Sort entries (by title) and hostnames alphabetically
+            ordered_data[severity] = OrderedDict(
                 sorted(
-                    ((entry_title, sorted(list(hostnames))) for entry_title, hostnames in merged_data[severity].items()),
-                    key=lambda x: x[0]
+                    ((key, {
+                        "title": entry_data["title"],
+                        "hostnames": sorted(entry_data["hostnames"]),
+                        "remediations": entry_data["remediations"]
+                    }) for key, entry_data in grouped_data[severity].items()),
+                    key=lambda x: x[1]["title"]
                 )
             )
-
-    return ordered_merged_data
+    return ordered_data
 
 
 def write_grouped_data_to_json(grouped_data, output_file):
@@ -96,22 +128,54 @@ def write_grouped_data_to_json(grouped_data, output_file):
 
 
 def generate_html_tables(grouped_data):
-    html_tables = ""
+    html_tables = generate_severity_legend_table()
 
     for severity in grouped_data:
         entries = grouped_data[severity]
 
         html_table = "<h2>{}</h2>\n".format(severity.capitalize())
-        html_table += "<table border='1' cellpadding='5' cellspacing='0'>\n"
-        html_table += "<tr><th>Entry Title</th><th>Hostnames</th></tr>\n"
-        for entry_title, hostnames in entries.items():
-            escaped_entry_title = escape(entry_title, quote=True)
-            html_table += "<tr><td>{}</td><td>{}</td></tr>\n".format(escaped_entry_title, ", ".join(hostnames))
+        html_table += "<table {}>\n".format(HTML_TABLE_OPTIONS)
+        html_table += "<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>\n"
+        for key, entry_data in entries.items():
+            escaped_entry_title = escape_html(entry_data["title"])
+            hostnames = ", ".join(entry_data["hostnames"])
+
+            remediations = []
+            for remediation in entry_data["remediations"]:
+                type = remediation["type"]
+                context = remediation["context"]
+
+                if type == "hint":
+                    remediations.append(escape_html(context))
+                elif type == "playbook":
+                    remediations.append("Path to Ansible playbook: <code>{}</code>".format(escape_html(context)))
+                elif type == "command":
+                    command_context = " ".join(context)
+                    remediations.append("Command: <code>{}</code>".format(escape_html(command_context)))
+
+            remediations_html = "<br>".join(remediations)
+
+            html_table += "<tr><td>{}</td><td>{}</td><td>{}</td></tr>\n".format(
+                escaped_entry_title, hostnames, remediations_html
+            )
         html_table += "</table>"
 
         html_tables += html_table + "<br>\n"
 
     return html_tables
+
+
+def generate_severity_legend_table():
+    html_table = "<h3>Severity Levels Legend</h3>\n"
+    html_table += "<table {}>\n".format(HTML_TABLE_OPTIONS)
+    html_table += "<tr><th>Severity</th><th>Description</th></tr>\n"
+    html_table += "<tr style='background-color: #ff6666'><td>Inhibitor</td><td>Will inhibit (hard stop) the upgrade process, otherwise the system could become unbootable, inaccessible, or dysfunctional.</td></tr>\n"
+    html_table += "<tr style='background-color: #ffcc66'><td>High</td><td>Very likely to result in a deteriorated system state.</td></tr>\n"
+    html_table += "<tr style='background-color: #ffff66'><td>Medium</td><td>Can impact both the system and applications.</td></tr>\n"
+    html_table += "<tr style='background-color: #ccff66'><td>Low</td><td>Should not impact the system but can have an impact on applications.</td></tr>\n"
+    html_table += "<tr style='background-color: #66ff66'><td>Info</td><td>Informational with no expected impact to the system or applications.</td></tr>\n"
+    html_table += "</table><br>"
+    return html_table
 
 
 def write_html_tables_to_file(html_tables, output_file):
