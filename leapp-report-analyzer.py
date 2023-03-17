@@ -1,6 +1,7 @@
 import argparse
 import glob
 import json
+import logging
 import os
 import sys
 from collections import OrderedDict, defaultdict
@@ -25,6 +26,8 @@ def escape_html(text):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
     parser = get_parser()
     args = parser.parse_args()
 
@@ -33,12 +36,20 @@ def main():
     else:
         input_files = args.input_files
 
+    logging.info("Processing %d input files", len(input_files))
+
     grouped_data_list = [parse_leapp_report(input_file) for input_file in input_files]
     merged_grouped_data = merge_grouped_data(grouped_data_list)
     ordered_merged_data = order_grouped_data(merged_grouped_data)
+
+    logging.info("Writing JSON output to %s", args.output_json)
     write_grouped_data_to_json(ordered_merged_data, args.output_json)
+
+    logging.info("Writing HTML output to %s", args.output_html)
     html_tables = generate_html_tables(ordered_merged_data)
     write_html_tables_to_file(html_tables, args.output_html)
+
+    logging.info("Results written to %s and %s", args.output_json, args.output_html)
 
 
 def get_parser():
@@ -63,6 +74,7 @@ def get_parser():
 
 
 def parse_leapp_report(report_file):
+    logging.info("Processing report file: %s", report_file)
     with open(report_file, "r") as f:
         report_data = json.load(f)
 
