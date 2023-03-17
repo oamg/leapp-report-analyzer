@@ -27,11 +27,13 @@ Script works on both Python2 and Python3, versions:
 ## Usage
 
 You can use the Leapp Report Analyzer with either individual Leapp report JSON files or a directory containing multiple JSON files.
-The following arguments are required:
-- `-f / --input-files`: One or more Leapp report JSON files to be analyzed (e.g., `-f report1.json report2.json`). Not required if `-d` is used.
-- `-d / --input-directory`: A directory containing Leapp report JSON files to be analyzed (e.g., `-d reports_directory`). Not required if `-f` is used.
-- `-o / --output-json`: The output JSON file to store the grouped data (e.g., `-o output.json`).
-- `-t / --output-html`: The output HTML file to store the tables with grouped data (e.g., `-t output.html`).
+Using one of the following arguments is required:
+- `-f / --input-files`: One or more Leapp report JSON files to be analyzed (e.g., `-f report1.json report2.json`).
+- `-d / --input-directory`: A directory containing Leapp report JSON files to be analyzed (e.g., `-d reports_directory`).
+
+Output arguments are optional:
+- `-o / --output-json`: The output JSON file to store the grouped data (e.g., `-o output.json`). Default: `leapp_report_analysis.json`
+- `-t / --output-html`: The output HTML file to store the tables with grouped data (e.g., `-t output.html`). Default: `leapp_report_analysis.html`
 
 For more detailed information, run:
 ```bash
@@ -50,6 +52,12 @@ Analyze a directory containing Leapp report JSON files:
 
 ```bash
 python leapp-report-analyzer.py -d reports_directory -o output.json -t output.html
+```
+
+Analyze a directory, use the default output file names:
+
+```bash
+python leapp-report-analyzer.py -d reports_directory
 ```
 
 ## Severity Levels

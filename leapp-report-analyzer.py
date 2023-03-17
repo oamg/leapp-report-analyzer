@@ -14,6 +14,8 @@ else:
 
 SEVERITY_ORDER = ["inhibitor", "high", "medium", "low", "info"]
 HTML_TABLE_OPTIONS = "border='1' cellpadding='5' cellspacing='0'"
+JSON_OUTPUT_DEFAULT = "leapp_report_analysis.json"
+HTML_OUTPUT_DEFAULT = "leapp_report_analysis.html"
 
 
 def _create_grouped_data_structure():
@@ -31,6 +33,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
 
+    output_json = args.output_json or JSON_OUTPUT_DEFAULT
+    output_html = args.output_html or HTML_OUTPUT_DEFAULT
     if args.input_directory:
         input_files = glob.glob(os.path.join(args.input_directory, "*.json"))
     else:
@@ -42,14 +46,14 @@ def main():
     merged_grouped_data = merge_grouped_data(grouped_data_list)
     ordered_merged_data = order_grouped_data(merged_grouped_data)
 
-    logging.info("Writing JSON output to %s", args.output_json)
-    write_grouped_data_to_json(ordered_merged_data, args.output_json)
+    logging.info("Writing JSON output to %s", output_json)
+    write_grouped_data_to_json(ordered_merged_data, output_json)
 
-    logging.info("Writing HTML output to %s", args.output_html)
+    logging.info("Writing HTML output to %s", output_html)
     html_tables = generate_html_tables(ordered_merged_data)
-    write_html_tables_to_file(html_tables, args.output_html)
+    write_html_tables_to_file(html_tables, output_html)
 
-    logging.info("Results written to %s and %s", args.output_json, args.output_html)
+    logging.info("Results written to %s and %s", output_json, output_html)
 
 
 def get_parser():
@@ -64,10 +68,15 @@ def get_parser():
         "-d", "--input-directory", help="Directory containing leapp report JSON files to be analyzed"
     )
 
-    output_group = parser.add_argument_group("output", "Output options, both required")
-    output_group.add_argument("-o", "--output-json", required=True, help="Output JSON file to store the grouped data")
-    output_group.add_argument(
-        "-t", "--output-html", required=True, help="Output HTML file to store the tables with grouped data"
+    parser.add_argument(
+        "-o",
+        "--output-json",
+        help="Output JSON file to store the grouped data (default: '{}')".format(JSON_OUTPUT_DEFAULT),
+    )
+    parser.add_argument(
+        "-t",
+        "--output-html",
+        help="Output HTML file to store the tables with grouped data (default: '{}')".format(HTML_OUTPUT_DEFAULT),
     )
 
     return parser
