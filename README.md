@@ -78,3 +78,10 @@ The Leapp Report Analyzer generates two output files:
 
 - `output.json`: A JSON file containing the grouped data organized by severity and entry title. Each severity level has a dictionary with the title of the entry as the key and a list of hostnames as the value.
 - `output.html`: An HTML file containing tables displaying the grouped data. Each severity level has its own table with two columns: Entry Title and Hostnames.
+
+You can look at the example output below:
+- [example-output.json](example-output.json)
+- [example-output.html](example-output.html)
+
+Screenshot of the HTML page:
+![Screenshot of HTML](example-screenshot.png)

@@ -1,0 +1,123 @@
+{
+  "inhibitor": {
+    "f08a07da902958defa4f5c2699fae9ec2eb67c5b": {
+      "title": "Leapp detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed.",
+      "hostnames": [
+        "alpha.hostname.com"
+      ],
+      "remediations": []
+    },
+    "d35f6c6b1b1fa6924ef442e3670d90fa92f0d54b": {
+      "title": "Missing required answers in the answer file",
+      "hostnames": [
+        "alpha.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": [
+        {
+          "type": "hint",
+          "context": "Please register user choices with leapp answer cli command or by manually editing the answerfile."
+        },
+        {
+          "type": "command",
+          "context": [
+            "leapp",
+            "answer",
+            "--section",
+            "remove_pam_pkcs11_module_check.confirm=True"
+          ]
+        }
+      ]
+    }
+  },
+  "high": {
+    "0c98585b1d8d252eb540bf61560094f3495351f5": {
+      "title": "Difference in Python versions and support in RHEL 8",
+      "hostnames": [
+        "alpha.hostname.com",
+        "beta.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": [
+        {
+          "type": "hint",
+          "context": "Please run \"alternatives --set python /usr/bin/python3\" after upgrade"
+        }
+      ]
+    }
+  },
+  "medium": {
+    "bf47e7305d6805e8bbeaa7593cf01e38030c23f3": {
+      "title": "Module pam_pkcs11 will be removed from PAM configuration",
+      "hostnames": [
+        "beta.hostname.com"
+      ],
+      "remediations": [
+        {
+          "type": "hint",
+          "context": "Configure SSSD to replace pam_pkcs11"
+        }
+      ]
+    },
+    "c4222ebd18730a76f6bc7b3b66df898b106e6554": {
+      "title": "chrony using default configuration",
+      "hostnames": [
+        "alpha.hostname.com",
+        "beta.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": []
+    }
+  },
+  "low": {
+    "c75fe5e06c70d9e764703fa2611f917c75946226": {
+      "title": "Dosfstools incompatible changes in the next major version",
+      "hostnames": [
+        "beta.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": [
+        {
+          "type": "hint",
+          "context": "Please update your scripts to be compatible with the changes."
+        }
+      ]
+    },
+    "39d7183dafba798aa4bbb1e70b0ef2bbe5b1772f": {
+      "title": "SElinux will be set to permissive mode",
+      "hostnames": [
+        "beta.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": [
+        {
+          "type": "hint",
+          "context": "Make sure there are no SElinux related warnings after the upgrade and enable SElinux manually afterwards. Notice: You can ignore the \"/root/tmp_leapp_py3\" SElinux warnings."
+        }
+      ]
+    }
+  },
+  "info": {
+    "4f25fea9b15b9d1d07d52cc1de02073f295dac3d": {
+      "title": "SElinux disabled",
+      "hostnames": [
+        "alpha.hostname.com"
+      ],
+      "remediations": []
+    },
+    "8fb81863f8413bd617c2a55b69b8e10ff03d7c72": {
+      "title": "SElinux relabeling will be scheduled",
+      "hostnames": [
+        "beta.hostname.com",
+        "delta.hostname.com",
+        "gamma.hostname.com"
+      ],
+      "remediations": []
+    }
+  }
+}
