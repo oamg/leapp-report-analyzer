@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Leapp Report Analyzer</title>
+    <style>table, th, td {border: 1px solid black;}</style>
+</head>
+<body>
+<h3>Severity Levels Legend</h3>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Severity</th><th>Description</th></tr>
+<tr style='background-color: #ff6666'><td>Inhibitor</td><td>Will inhibit (hard stop) the upgrade process, otherwise the system could become unbootable, inaccessible, or dysfunctional.</td></tr>
+<tr style='background-color: #ffcc66'><td>High</td><td>Very likely to result in a deteriorated system state.</td></tr>
+<tr style='background-color: #ffff66'><td>Medium</td><td>Can impact both the system and applications.</td></tr>
+<tr style='background-color: #ccff66'><td>Low</td><td>Should not impact the system but can have an impact on applications.</td></tr>
+<tr style='background-color: #66ff66'><td>Info</td><td>Informational with no expected impact to the system or applications.</td></tr>
+</table><br><h2>Inhibitor</h2>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>
+<tr><td>Leapp detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed.</td><td>alpha.hostname.com</td><td></td></tr>
+<tr><td>Missing required answers in the answer file</td><td>alpha.hostname.com, delta.hostname.com, gamma.hostname.com</td><td>Please register user choices with leapp answer cli command or by manually editing the answerfile.<br>Command: <code>leapp answer --section remove_pam_pkcs11_module_check.confirm=True</code></td></tr>
+</table><br>
+<h2>High</h2>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>
+<tr><td>Difference in Python versions and support in RHEL 8</td><td>alpha.hostname.com, beta.hostname.com, delta.hostname.com, gamma.hostname.com</td><td>Please run &quot;alternatives --set python /usr/bin/python3&quot; after upgrade</td></tr>
+</table><br>
+<h2>Medium</h2>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>
+<tr><td>Module pam_pkcs11 will be removed from PAM configuration</td><td>beta.hostname.com</td><td>Configure SSSD to replace pam_pkcs11</td></tr>
+<tr><td>chrony using default configuration</td><td>alpha.hostname.com, beta.hostname.com, delta.hostname.com, gamma.hostname.com</td><td></td></tr>
+</table><br>
+<h2>Low</h2>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>
+<tr><td>Dosfstools incompatible changes in the next major version</td><td>beta.hostname.com, delta.hostname.com, gamma.hostname.com</td><td>Please update your scripts to be compatible with the changes.</td></tr>
+<tr><td>SElinux will be set to permissive mode</td><td>beta.hostname.com, delta.hostname.com, gamma.hostname.com</td><td>Make sure there are no SElinux related warnings after the upgrade and enable SElinux manually afterwards. Notice: You can ignore the &quot;/root/tmp_leapp_py3&quot; SElinux warnings.</td></tr>
+</table><br>
+<h2>Info</h2>
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Entry Title</th><th>Hostnames</th><th>Remediations</th></tr>
+<tr><td>SElinux disabled</td><td>alpha.hostname.com</td><td></td></tr>
+<tr><td>SElinux relabeling will be scheduled</td><td>beta.hostname.com, delta.hostname.com, gamma.hostname.com</td><td></td></tr>
+</table><br>
+
+</body>
+</html>
