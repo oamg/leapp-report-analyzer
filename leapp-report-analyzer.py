@@ -18,14 +18,6 @@ JSON_OUTPUT_DEFAULT = "leapp_report_analysis.json"
 HTML_OUTPUT_DEFAULT = "leapp_report_analysis.html"
 
 
-def _create_grouped_data_structure():
-    # JSON structure: {severity: [key: {title: str, {hostnames: [], remediations: {}}]}
-    return defaultdict(lambda: defaultdict(lambda: {"title": "", "hostnames": [], "remediations": []}))
-
-
-def escape_html(text):
-    return escape(text, quote=True)
-
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -87,7 +79,7 @@ def parse_leapp_report(report_file):
     with open(report_file, "r") as f:
         report_data = json.load(f)
 
-    grouped_data = _create_grouped_data_structure()
+    grouped_data = create_grouped_data_structure()
 
     for entry in report_data["entries"]:
         severity = entry["severity"]
@@ -108,9 +100,14 @@ def parse_leapp_report(report_file):
     return grouped_data
 
 
+def create_grouped_data_structure():
+    # JSON structure: {severity: [key: {title: str, {hostnames: [], remediations: {}}]}
+    return defaultdict(lambda: defaultdict(lambda: {"title": "", "hostnames": [], "remediations": []}))
+
+
 def merge_grouped_data(grouped_data_list):
     """Merge grouped data from multiple reports into one."""
-    merged_data = _create_grouped_data_structure()
+    merged_data = create_grouped_data_structure()
 
     for grouped_data in grouped_data_list:
         for severity, entries in grouped_data.items():
@@ -186,6 +183,10 @@ def generate_html_tables(grouped_data):
     return html_tables
 
 
+def escape_html(text):
+    return escape(text, quote=True)
+
+
 def generate_severity_legend_table():
     html_table = "<h3>Severity Levels Legend</h3>\n"
     html_table += "<table {}>\n".format(HTML_TABLE_OPTIONS)
@@ -216,5 +217,5 @@ def write_html_tables_to_file(html_tables, output_file):
         f.write(html_template.format(content=html_tables))
 
 
-if __name__:
+if __name__ == "__main__":
     main()
