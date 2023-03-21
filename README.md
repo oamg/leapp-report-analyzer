@@ -21,6 +21,11 @@ Follow these steps to obtain the correct JSON files from your systems:
 4. Repeat steps 1-3 for all machines you want to analyze.
 5. Once you have gathered all the Leapp reports, run the Leapp Report Analyzer with the folder containing the reports as input (e.g., `-d reports_directory`).
 
+Examples of the Leapp report files can be viewed in the [example-reports](example-reports) directory.
+Running the Leapp Report Analyzer on these files will produce the identical files as [example-output.json](example-output.json) and [example-output.html](example-output.html) files.
+```bash
+python leapp-report-analyzer.py -d examples-reports
+```
 
 ## Installation
 

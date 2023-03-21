@@ -1,0 +1,152 @@
+{
+    "leapp_run_id": "c5ba189b-869f-4e05-b281-64e134f46e83",
+    "entries": [
+     {
+        "title": "Difference in Python versions and support in RHEL 8",
+        "timeStamp": "2023-02-09T13:16:54.346673Z",
+        "hostname": "alpha.hostname.com",
+        "detail": {
+          "related_resources": [
+            {
+              "scheme": "package",
+              "title": "python"
+            },
+            {
+              "scheme": "package",
+              "title": "python2"
+            },
+            {
+              "scheme": "package",
+              "title": "python3"
+            }
+          ],
+          "external": [
+            {
+              "url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_basic_system_settings/#using-python3",
+              "title": "Difference in Python versions and support in RHEL 8"
+            }
+          ],
+          "remediations": [
+            {
+              "type": "hint",
+              "context": "Please run \"alternatives --set python /usr/bin/python3\" after upgrade"
+            }
+          ]
+        },
+        "actor": "python_inform_user",
+        "summary": "In RHEL 8, there is no 'python' command. Python 3 (backward incompatible) is the primary Python version and Python 2 is available with limited support and limited set of packages. Read more here: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_basic_system_settings/#using-python3",
+        "audience": "developer",
+        "flags": [],
+        "key": "0c98585b1d8d252eb540bf61560094f3495351f5",
+        "id": "ac1f0df4e60ec0121e4a98ff69a9a263213b0c8df598ee670ca53be98c6f81bb",
+        "tags": [
+          "python"
+        ],
+        "severity": "high"
+      },
+      {
+        "title": "Leapp detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed.",
+        "timeStamp": "2023-02-09T13:16:54.915182Z",
+        "hostname": "alpha.hostname.com",
+        "actor": "check_detected_devices_and_drivers",
+        "summary": "Support for the following RHEL 7 device drivers has been removed in RHEL 8:\n     - floppy\n     - pata_acpi\n",
+        "audience": "sysadmin",
+        "flags": [
+          "inhibitor"
+        ],
+        "key": "f08a07da902958defa4f5c2699fae9ec2eb67c5b",
+        "id": "d1567119677b778f81980645c013e5cf975206961903c0dfd2806310a2538c3e",
+        "tags": [
+          "kernel",
+          "drivers"
+        ],
+        "severity": "high"
+      },
+      {
+        "title": "chrony using default configuration",
+        "timeStamp": "2023-02-09T13:17:10.348230Z",
+        "hostname": "alpha.hostname.com",
+        "detail": {
+          "related_resources": [
+            {
+              "scheme": "package",
+              "title": "ntpd"
+            },
+            {
+              "scheme": "package",
+              "title": "chrony"
+            },
+            {
+              "scheme": "file",
+              "title": "/etc/chrony.conf"
+            }
+          ]
+        },
+        "actor": "check_chrony",
+        "summary": "default chrony configuration in RHEL8 uses leapsectz directive, which cannot be used with leap smearing NTP servers, and uses a single pool directive instead of four server directives",
+        "audience": "sysadmin",
+        "flags": [],
+        "key": "c4222ebd18730a76f6bc7b3b66df898b106e6554",
+        "id": "b52f40fd18455c29e024367380fe05e2bae5cfd371c512cb0e6f422212588641",
+        "tags": [
+          "services",
+          "time management"
+        ],
+        "severity": "medium"
+      },
+      {
+        "title": "SElinux disabled",
+        "timeStamp": "2023-02-09T13:17:10.784599Z",
+        "hostname": "alpha.hostname.com",
+        "actor": "check_se_linux",
+        "summary": "SElinux disabled, continuing...",
+        "audience": "sysadmin",
+        "flags": [],
+        "key": "4f25fea9b15b9d1d07d52cc1de02073f295dac3d",
+        "id": "95eb85d0f5fe3c47cbad4c69b4734e51b53622756e005d47e6d4dc684d5e2eff",
+        "tags": [
+          "selinux",
+          "security"
+        ],
+        "severity": "info"
+      },
+      {
+        "title": "Missing required answers in the answer file",
+        "timeStamp": "2023-02-09T13:17:11.455788Z",
+        "hostname": "alpha.hostname.com",
+        "detail": {
+          "related_resources": [
+            {
+              "scheme": "dialog",
+              "title": "remove_pam_pkcs11_module_check.confirm"
+            }
+          ],
+          "remediations": [
+            {
+              "type": "hint",
+              "context": "Please register user choices with leapp answer cli command or by manually editing the answerfile."
+            },
+            {
+              "type": "command",
+              "context": [
+                "leapp",
+                "answer",
+                "--section",
+                "remove_pam_pkcs11_module_check.confirm=True"
+              ]
+            }
+          ]
+        },
+        "actor": "verify_check_results",
+        "summary": "One or more sections in answerfile are missing user choices: remove_pam_pkcs11_module_check.confirm\nFor more information consult https://leapp.readthedocs.io/en/latest/dialogs.html",
+        "audience": "sysadmin",
+        "flags": [
+          "inhibitor"
+        ],
+        "key": "d35f6c6b1b1fa6924ef442e3670d90fa92f0d54b",
+        "id": "0a5410f61b22a3741959b88559ac49a0630bf20ff713028009a6069517b943ef",
+        "tags": [],
+        "severity": "high"
+      }
+    ]
+  }
