@@ -6,8 +6,26 @@ The tool processes JSON files containing Leapp reports and generates a JSON file
 By analyzing Leapp reports and providing organized output, the Leapp Report Analyzer simplifies the process of identifying and addressing potential issues in your systems.
 
 More information about Leapp:
-- [Leapp GitHub repository](https://github.com/oamg/leapp) - report schemas can be found here
+- [Leapp GitHub repository](https://github.com/oamg/leapp) - report schemas can be found here ([v100](https://github.com/oamg/leapp/blob/master/report-schema-v100.json), [v110](https://github.com/oamg/leapp/blob/master/report-schema-v110.json), [v120](https://github.com/oamg/leapp/blob/master/report-schema-v120.json))
 - [Leapp Documentation](https://leapp.readthedocs.io/en/latest/)
+
+## Preparing Leapp Report JSON Files — Input
+
+To use the Leapp Report Analyzer, make sure to provide Leapp report JSON files as input.
+Providing any other type of input, such as the stdout of `leapp preupgrade`, or using a different file format, will cause the script to not work correctly.
+Follow these steps to obtain the correct JSON files from your systems:
+
+1. Run `leapp preupgrade` on your machine.
+2. Locate the preupgrade report at `/var/log/leapp/leapp-report.json`. Using any other output from `leapp preupgrade` will not work.
+3. Move the report to a shared directory (e.g., `reports_directory`).
+4. Repeat steps 1-3 for all machines you want to analyze.
+5. Once you have gathered all the Leapp reports, run the Leapp Report Analyzer with the folder containing the reports as input (e.g., `-d reports_directory`).
+
+Examples of the Leapp report files can be viewed in the [example-reports](example-reports) directory.
+Running the Leapp Report Analyzer on these files will produce the identical files as [example-output.json](example-output.json) and [example-output.html](example-output.html) files.
+```bash
+python leapp-report-analyzer.py -d examples-reports
+```
 
 ## Installation
 

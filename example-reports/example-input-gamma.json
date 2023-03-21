@@ -1,0 +1,188 @@
+{
+  "leapp_run_id": "59d7187d-9040-4014-a45c-86ead8d86306",
+  "entries": [
+    {
+      "title": "chrony using default configuration",
+      "timeStamp": "2023-02-09T13:17:34.195399Z",
+      "hostname": "gamma.hostname.com",
+      "detail": {
+        "related_resources": [
+          {
+            "scheme": "package",
+            "title": "ntpd"
+          },
+          {
+            "scheme": "package",
+            "title": "chrony"
+          },
+          {
+            "scheme": "file",
+            "title": "/etc/chrony.conf"
+          }
+        ]
+      },
+      "actor": "check_chrony",
+      "summary": "default chrony configuration in RHEL8 uses leapsectz directive, which cannot be used with leap smearing NTP servers, and uses a single pool directive instead of four server directives",
+      "audience": "sysadmin",
+      "flags": [],
+      "key": "c4222ebd18730a76f6bc7b3b66df898b106e6554",
+      "id": "8613a674d7f43162342d69954a247c78eedd0a437138dc8b0d3e3f58493accfe",
+      "tags": [
+        "services",
+        "time management"
+      ],
+      "severity": "medium"
+    },
+    {
+      "title": "Difference in Python versions and support in RHEL 8",
+      "timeStamp": "2023-02-09T13:17:38.885889Z",
+      "hostname": "gamma.hostname.com",
+      "detail": {
+        "related_resources": [
+          {
+            "scheme": "package",
+            "title": "python"
+          },
+          {
+            "scheme": "package",
+            "title": "python2"
+          },
+          {
+            "scheme": "package",
+            "title": "python3"
+          }
+        ],
+        "external": [
+          {
+            "url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_basic_system_settings/#using-python3",
+            "title": "Difference in Python versions and support in RHEL 8"
+          }
+        ],
+        "remediations": [
+          {
+            "type": "hint",
+            "context": "Please run \"alternatives --set python /usr/bin/python3\" after upgrade"
+          }
+        ]
+      },
+      "actor": "python_inform_user",
+      "summary": "In RHEL 8, there is no 'python' command. Python 3 (backward incompatible) is the primary Python version and Python 2 is available with limited support and limited set of packages. Read more here: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_basic_system_settings/#using-python3",
+      "audience": "developer",
+      "flags": [],
+      "key": "0c98585b1d8d252eb540bf61560094f3495351f5",
+      "id": "3aaea4d1816d60432fef89ba90764f74950d66525dac465b1cb23f2d33f481c8",
+      "tags": [
+        "python"
+      ],
+      "severity": "high"
+    },
+    {
+      "title": "Dosfstools incompatible changes in the next major version",
+      "timeStamp": "2023-02-09T13:17:39.032800Z",
+      "hostname": "gamma.hostname.com",
+      "detail": {
+        "related_resources": [
+          {
+            "scheme": "package",
+            "title": "dosfstools"
+          }
+        ],
+        "remediations": [
+          {
+            "type": "hint",
+            "context": "Please update your scripts to be compatible with the changes."
+          }
+        ]
+      },
+      "actor": "checkdosfstools",
+      "summary": "The automatic alignment of data clusters that was added in 3.0.8 and broken for FAT32 starting with 3.0.20 has been reinstated. If you need to create file systems for finicky devices that have broken FAT implementations use the option -a to disable alignment.\nThe fsck.fat now defaults to interactive repair mode which previously had to be selected with the -r option.\n",
+      "audience": "sysadmin",
+      "flags": [],
+      "key": "c75fe5e06c70d9e764703fa2611f917c75946226",
+      "id": "045ffe9526d2551b563302fc6507ea264f1e4e63d14c3701de4aba7931a029b4",
+      "tags": [
+        "filesystem",
+        "tools"
+      ],
+      "severity": "low"
+    },
+    {
+      "title": "SElinux relabeling will be scheduled",
+      "timeStamp": "2023-02-09T13:17:39.186031Z",
+      "hostname": "gamma.hostname.com",
+      "actor": "check_se_linux",
+      "summary": "SElinux relabeling will be scheduled as the status is permissive/enforcing.",
+      "audience": "sysadmin",
+      "flags": [],
+      "key": "8fb81863f8413bd617c2a55b69b8e10ff03d7c72",
+      "id": "a5c7f67a0875ac77747d01841b5541f40cbcb2291e7e455915e34220fe7bbd08",
+      "tags": [
+        "selinux",
+        "security"
+      ],
+      "severity": "info"
+    },
+    {
+      "title": "SElinux will be set to permissive mode",
+      "timeStamp": "2023-02-09T13:17:39.211379Z",
+      "hostname": "gamma.hostname.com",
+      "detail": {
+        "remediations": [
+          {
+            "type": "hint",
+            "context": "Make sure there are no SElinux related warnings after the upgrade and enable SElinux manually afterwards. Notice: You can ignore the \"/root/tmp_leapp_py3\" SElinux warnings."
+          }
+        ]
+      },
+      "actor": "check_se_linux",
+      "summary": "SElinux will be set to permissive mode. Current mode: enforcing. This action is required by the upgrade process to make sure the upgraded system can boot without beinig blocked by SElinux rules.",
+      "audience": "sysadmin",
+      "flags": [],
+      "key": "39d7183dafba798aa4bbb1e70b0ef2bbe5b1772f",
+      "id": "a52092a0e346db505cf3c987987e4bc72cc9244a944f6be99082fa2660d8b4ef",
+      "tags": [
+        "selinux",
+        "security"
+      ],
+      "severity": "low"
+    },
+    {
+      "title": "Missing required answers in the answer file",
+      "timeStamp": "2023-02-09T13:17:43.444829Z",
+      "hostname": "gamma.hostname.com",
+      "detail": {
+        "related_resources": [
+          {
+            "scheme": "dialog",
+            "title": "remove_pam_pkcs11_module_check.confirm"
+          }
+        ],
+        "remediations": [
+          {
+            "type": "hint",
+            "context": "Please register user choices with leapp answer cli command or by manually editing the answerfile."
+          },
+          {
+            "type": "command",
+            "context": [
+              "leapp",
+              "answer",
+              "--section",
+              "remove_pam_pkcs11_module_check.confirm=True"
+            ]
+          }
+        ]
+      },
+      "actor": "verify_check_results",
+      "summary": "One or more sections in answerfile are missing user choices: remove_pam_pkcs11_module_check.confirm\nFor more information consult https://leapp.readthedocs.io/en/latest/dialogs.html",
+      "audience": "sysadmin",
+      "flags": [
+        "inhibitor"
+      ],
+      "key": "d35f6c6b1b1fa6924ef442e3670d90fa92f0d54b",
+      "id": "09b0b472e151c5df44c532a79a89a2d6ae9ea870e7cee520e9b527fd3d64fee0",
+      "tags": [],
+      "severity": "high"
+    }
+  ]
+}
