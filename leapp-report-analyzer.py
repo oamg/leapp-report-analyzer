@@ -34,7 +34,16 @@ def main():
 
     logging.info("Processing %d input files", len(input_files))
 
-    grouped_data_list = [parse_leapp_report(input_file) for input_file in input_files]
+    # Process input files, skip files that cannot be processed
+    grouped_data_list = []
+    for input_file in input_files:
+        try:
+            grouped_data = parse_leapp_report(input_file)
+            grouped_data_list.append(grouped_data)
+        except Exception as e:
+            logging.error("Could not process file %s", input_file, exc_info=True)
+            logging.info("Skipping file %s", input_file)
+
     merged_grouped_data = merge_grouped_data(grouped_data_list)
     ordered_merged_data = order_grouped_data(merged_grouped_data)
 
