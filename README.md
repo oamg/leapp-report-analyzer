@@ -6,7 +6,7 @@ The tool processes JSON files containing Leapp reports and generates a JSON file
 By analyzing Leapp reports and providing organized output, the Leapp Report Analyzer simplifies the process of identifying and addressing potential issues in your systems.
 
 More information about Leapp:
-- [Leapp GitHub repository](https://github.com/oamg/leapp) - report schemas can be found here ([v100](https://github.com/oamg/leapp/blob/master/report-schema-v100.json), [v110](https://github.com/oamg/leapp/blob/master/report-schema-v110.json), [v120](https://github.com/oamg/leapp/blob/master/report-schema-v120.json))
+- [Leapp GitHub repository](https://github.com/oamg/leapp) - report schemas can be found here ([default schema v110](https://github.com/oamg/leapp/blob/master/report-schema-v110.json))
 - [Leapp Documentation](https://leapp.readthedocs.io/en/latest/)
 
 ## Preparing Leapp Report JSON Files — Input
